@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Word Ladder Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f4f4f4;
+      padding: 30px;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    input {
+      padding: 10px;
+      margin: 5px;
+      font-size: 16px;
+      width: 120px;
+      text-align: center;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+
+    button:hover {
+      background: #45a049;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #222;
+    }
+
+    .path {
+      margin-top: 10px;
+      font-weight: bold;
+      color: #007BFF;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Word Ladder Game</h1>
+
+  <p>Enter words of the same length</p>
+
+  <input type="text" id="start" placeholder="Start (e.g. hit)">
+  <input type="text" id="end" placeholder="End (e.g. cog)">
+  <br><br>
+  <button onclick="playGame()">Find Ladder</button>
+
+  <div id="result"></div>
+
+  <script>
+    function wordLadder(beginWord, endWord, wordList) {
+      const wordSet = new Set(wordList);
+
+      if (!wordSet.has(endWord)) {
+        return [];
+      }
+
+      const queue = [];
+      queue.push([beginWord, [beginWord]]);
+
+      const visited = new Set([beginWord]);
+
+      while (queue.length > 0) {
+        const [currentWord, path] = queue.shift();
+
+        if (currentWord === endWord) {
+          return path;
+        }
+
+        for (let i = 0; i < currentWord.length; i++) {
+          for (let a = 0; a < 26; a++) {
+            const letter = String.fromCharCode(97 + a);
+
+            if (letter === currentWord[i]) continue;
+
+            const newWord =
+              currentWord.slice(0, i) +
+              letter +
+              currentWord.slice(i + 1);
+
+            if (wordSet.has(newWord) && !visited.has(newWord)) {
+              queue.push([newWord, [...path, newWord]]);
+              visited.add(newWord);
+            }
+          }
+        }
+      }
+
+      return [];
+    }
+
+    function playGame() {
+      const start = document.getElementById("start").value.toLowerCase();
+      const end = document.getElementById("end").value.toLowerCase();
+
+      // Sample dictionary (you can expand this)
+      const wordList = [
+        "hot", "dot", "dog", "lot", "log", "cog"
+      ];
+
+      const result = wordLadder(start, end, wordList);
+
+      const output = document.getElementById("result");
+
+      if (result.length > 0) {
+        output.innerHTML = `
+          <div class="path">Path: ${result.join(" → ")}</div>
+          <div>Total steps: ${result.length}</div>
+        `;
+      } else {
+        output.innerHTML = `<div>No transformation found</div>`;
+      }
+    }
+  </script>
+
+</body>
+</html>
